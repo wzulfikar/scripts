@@ -10,4 +10,4 @@ brew bundle dump --global --force
 echo "Updating Github gist.."
 gh gist edit ${GIST_ID_BREWFILE} -f .Brewfile ~/.Brewfile
 
-echo "Done! https://github.com/${GIST_ID_BREWFILE}"
+echo "Done! https://gist.github.com/${GIST_ID_BREWFILE}"
