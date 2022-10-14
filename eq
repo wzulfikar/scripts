@@ -1,14 +1,9 @@
-#!/usr/bin/env sh
-
-# usage:
-# 1. adjust file permission (if you have not): `chmod +x eq`
-# 2. copy or link to your path, ie. `ln -s eq /usr/local/bin`
-# 3. run `eq helloworld helloworld`
+#!/bin/sh
 
 if [ -z "$1" ]; then
-    echo "eq –– check if both string are equal"
-    echo "usage: eq <string1> <string2>"
-    echo "example: eq 'Hi there!' 'Hi there'"
+    echo "$(basename $0) – check if both string are equal"
+    echo "Usage: eq <string1> <string2>"
+    echo "Example: eq 'Hi there!' 'Hi there'"
     exit
 fi
 
