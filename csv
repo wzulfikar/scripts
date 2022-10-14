@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# taken from http://stefaanlippens.net/pretty-csv.html
+perl -pe 's/((?<=,)|(?<=^)),/ ,/g;' "$@" | column -t -s, | exec less  -F -S -X -K

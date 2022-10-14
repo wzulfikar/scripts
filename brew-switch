@@ -1,0 +1,10 @@
+# switch brew package.
+# eg, switch from php71 to php56:
+
+if [ -z "$1" ]; then
+  echo "brew-switch –– unlink and link brew package"
+  echo "example: brew-switch php71 php56"
+  exit
+fi
+
+brew unlink $1 && brew link $2

@@ -1,0 +1,12 @@
+#/bin/sh
+
+[ -z "$GIST_ID_BREWFILE" ] && echo "ERROR: Missing env var 'GIST_ID_BREWFILE'" && exit 1
+
+# Download .Brewfile from gist if not exist
+if [ ! -f "~/.Brewfile" ]; then
+  echo "Downloading .Brewfile from gist.."
+  curl https://gist.github.com/wzulfikar/${GIST_ID_BREWFILE} >~/.Brewfile
+fi
+
+# Install packages from ~/.Brewfile
+brew bundle --global

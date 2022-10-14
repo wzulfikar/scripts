@@ -1,0 +1,9 @@
+#!/bin/sh
+
+[ -z "$GIST_ID_BREWFILE" ] && echo "ERROR: Missing env var 'GIST_ID_BREWFILE'" && exit 1
+
+# Dump brew packages into ~/.Brewfile
+brew bundle dump --global --force
+
+# Update Github gist
+gh gist edit ${GIST_ID_BREWFILE} -f .Brewfile ~/.Brewfile

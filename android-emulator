@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ "$1" = "-h" ]; then
+    echo "android-emulator runs android emulator command at"
+    echo '$ANDROID_HOME/emulator/emulator'
+    exit 0
+fi
+
+emulator_cmd=$ANDROID_HOME/emulator/emulator
+
+if [ -z "$1" ]; then
+    avd_name=$($emulator_cmd -list-avds | head -n 1)
+    if [ -z "$avd_name" ]; then
+        echo "[ERROR] no avd found. to create avd, read:"
+        echo "https://developer.android.com/studio/run/managing-avds"
+        exit 1
+    fi
+
+    echo "launching first device listed in 'emulator -list-avds'.."
+    echo "device found: $avd_name"
+    $emulator_cmd @${avd_name}
+    exit
+fi
+
+$emulator_cmd $@

@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# download youtube video and convert it to mp3.
+# behind the scene, `ytdl` is used to download
+# the video. once downloaded, the video file
+# will be converted to mp3 using `ffmpeg`.
+#
+# dependencies:
+# - ytdl: https://github.com/rylio/ytdl
+# - ffmpeg: http://ffmpeg.org
+# - awk: https://www.gnu.org/software/gawk/manual/gawk.html
+
+# display usage info
+if [ "$1" == "-h" ] || [ -z "$1" ]; then
+    echo "ytmp3 –– download youtube video and convert to mp3"
+    echo "usage: ytmp3 <youtube url/video id> <output dir>"
+    echo "example:"
+    echo "- ytmp3 RXARHZmpgvw ~/Downloads/"
+    echo "- ytmp3 https://www.youtube.com/watch?v=p29JUpsOSTE ~/Downloads/"
+    exit
+fi
+
+# ensure output dir exists
+OUTPUT_DIR=$2
+if [ "$OUTPUT_DIR" != "" ] && [ ! -d "$OUTPUT_DIR" ]; then
+    echo "Error: directory '$2' doesn't exist."
+    echo "Please create the directory and try again."
+    exit 1
+fi
+
+# ensure output dir has / suffix
+if [ "$OUTPUT_DIR" != "" ] && [[ "$OUTPUT_DIR" != */ ]]; then
+    OUTPUT_DIR="${OUTPUT_DIR}/"
+fi
+
+# verify dependencies
+hash ytdl 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS ytdl"; }
+hash ffmpeg 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS ffmpeg"; }
+if [ ! -z "$MISSING_DEPS" ]; then
+    echo "whoops! missing dependencies:"
+    echo $MISSING_DEPS
+    exit 2
+fi
+
+# use ytdl to fetch video info.
+# using ytdl v0.5.0, the info would look like this:
+# ```
+# Title: Bee Gees - How Deep Is Your Love (1977)
+# Author: beegees
+# Date Published: Oct 26 2009
+# Duration: 4m0s
+# ```
+#
+# the `awk -F': ' 'NR == 1 {print $2}'` will get the first
+# line of video info ('NR == 1'), and take the part of
+# line that comes after ': ' (-F': ').
+FILENAME=`ytdl --info $1 | awk -F': ' 'NR == 1 {print $2}'`
+if [ -z "$FILENAME" ]; then
+    echo "Download failed: video id '$1' is invalid"
+    exit 3
+fi
+
+echo "Downloading: $FILENAME"
+ytdl --filter best-audio --output $OUTPUT_DIR{{.Title}}.{{.Ext}} $1
+if [ "$?" != "0" ]; then
+    rm "${OUTPUT_DIR}${FILENAME}.webm"
+    exit $?
+fi
+
+# ensure the video is downloaded
+video_file="${OUTPUT_DIR}${FILENAME}.webm"
+if [ ! -f "${video_file}" ]; then
+    echo "Error: Couldn't convert video to mp3. Video file doesn't exist."
+    exit 4
+fi
+
+echo "Converting to mp3.."
+mp3_file=${OUTPUT_DIR}${FILENAME}.mp3
+ffmpeg -loglevel 0 -hide_banner -nostats -i "${OUTPUT_DIR}${FILENAME}.webm" "$mp3_file"
+
+echo "Deleting webm file.."
+rm "${OUTPUT_DIR}${FILENAME}.webm"
+
+echo "✔ ytmp3 finished: ${mp3_file}"

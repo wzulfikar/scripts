@@ -1,0 +1,24 @@
+#!/bin/sh
+
+SCRIPT_NAME=$(basename $0)
+if [ -z "$1" ]; then
+    echo "$SCRIPT_NAME –– add new entry (internet password) to macOS keychain"
+    echo "usage: $SCRIPT_NAME <file>"
+    echo "example: $SCRIPT_NAME mysite.com my-account@mail.com my-password"
+    exit
+fi
+
+WEBSITE=$1
+ACCOUNT=$2
+PASSWORD=$3
+COMMENT=$4
+
+sudo security add-internet-password \
+    -a "$ACCOUNT" \
+    -r "htps" \
+    -s "$WEBSITE" \
+    -w "$PASSWORD" \
+    -D "Internet password" \
+    -l "$WEBSITE ($ACCOUNT)" \
+    -j "$4" \
+    -T /System/Library/CoreServices/NetAuthAgent.app

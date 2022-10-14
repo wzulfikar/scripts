@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+
+# upload file to https://transfer.sh
+# source: https://github.com/dutchcoders/transfer.sh/
+#
+# usage:
+# 1. adjust file permission (if you have not): `chmod +x up`
+# 2. copy or link this file to your path (ie. `ln -s $(pwd)/up /usr/local/bin`)
+# 3. run up <file>
+
+if [ -z "$1" ]; then
+    echo "upload –– upload file to transfer.sh"
+    echo "usage: up <file>"
+    echo "example: up ~/Documents/my-file.pdf"
+    exit
+fi
+
+echo "uploading to transfer.sh.."
+
+# create temp file to write progress bar output
+tmpfile=$(mktemp)
+filename=$(basename $1)
+
+# support optional arg, will return link to virustotal scan result.
+# eg. upload malicious-file.exe virustotal
+optional_arg=""
+if [ $# -eq 2 ]; then
+    optional_arg="/$2"
+fi
+
+curl --progress-bar --upload-file $1 https://transfer.sh/$filename$optional_arg >> $tmpfile;
+cat $tmpfile;
+rm -f $tmpfile;

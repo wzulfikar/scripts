@@ -1,0 +1,58 @@
+#!/bin/sh
+
+script_name=$(basename $0)
+container=$1
+container_name=$(echo $container | gawk -F: '{print $1}')
+port=$(echo $container | gawk -F: '{print $2}')
+
+mysql_version=$(echo $container | gawk -F: '{print $3}')
+if [ -z "$mysql_version" ]; then
+    mysql_version=latest
+fi
+
+if [ -z "$1" ] || [ "$1" = "-h" ] || [ -z "$port" ]; then
+    echo "usage: $script_name <container name:port:mysql-version> [arg]"
+    echo "example:"
+    echo '- omit `mysql-version` to use latest:' "$script_name myapp:37071"
+    echo '- use mysql 5.7: ' "$script_name myapp:37071:5.7"
+    exit
+fi
+
+echo "[INFO] using container name '$container_name'"
+
+if [ "$2" = "rm" ]; then
+    echo "removing container.."
+    docker rm -f $container_name
+    exit
+fi
+
+if [ "$2" = "logs" ]; then
+    docker logs -f --tail 50 $container_name
+    exit
+fi
+
+if [ "$2" = "stop" ]; then
+    echo "stopping container.."
+    docker stop $container_name
+    exit
+fi
+
+PORT=${PORT:-37071}
+if [ -z "$(docker ps -a | grep $container_name)" ]; then
+    echo "running container.."
+    docker run \
+    --name $container_name \
+    --hostname $container_name \
+    -d \
+    -e MYSQL_ROOT_PASSWORD=password123 \
+    -p 0.0.0.0:$port:3306 \
+    mysql:${mysql_version}
+elif [ -z "$(docker ps | grep $container_name)" ]; then
+    echo "[INFO] container already exist. 'container_name' and 'port' will be ignored."
+    echo "starting container.."
+    docker start $container_name
+else
+    echo "container already started"
+fi
+
+docker ps | grep $container_name

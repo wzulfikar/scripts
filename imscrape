@@ -1,0 +1,3 @@
+#!/bin/sh
+
+image-scraper $1 && terminal-notifier -title 'Image Scraper' -message \"Finished scraping images from $1\"

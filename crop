@@ -1,0 +1,63 @@
+#! /bin/sh
+
+if [ -z "$1" ] || [ "$1" = "-h" ]; then
+    echo "crop –– crop one or multiple images using imagemagick"
+    echo "usage: crop <image or pattern> <crop geometry> [optional output dir]"
+    echo ""
+    echo "examples:"
+    echo "- crop single image:"
+    echo "  crop my-image.png 779x436+550+120"
+    echo "- crop multiple images:"
+    echo "  crop \"*.png\" 779x436+550+120"
+    echo "- crop multiple images and put in 'cropped' folder:"
+    echo "  crop \"*.png\" 779x436+550+120 ./cropped"
+    echo ""
+    echo "how to read the 'crop geometry' (ie. 779x436+550+120):"
+    echo "from pixel 0x0 (top left of given picture), select area of"
+    echo "779px to right and 436px to bottom and then push the"
+    echo "selected area 550px to right and 120px to bottom"
+fi
+
+# verify dependencies
+hash convert 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS convert"; }
+if [ ! -z "$MISSING_DEPS" ]; then
+    echo "whoops! missing dependencies:"
+    echo $MISSING_DEPS
+    exit
+fi
+
+current_dir=$(pwd)
+
+crop_geometry=$2
+output_dir=$3
+for filename in $1; do
+    if [ ! -e "$filename" ]; then
+        echo "crop skipped: $filename does not exist"
+        break
+    fi
+
+    # if output dir is given, do not modify filename
+    if [ ! -z "$output_dir" ]; then
+        convert $filename -crop $crop_geometry $output_dir/$filename
+        echo "$filename → $output_dir/$filename"
+        continue
+    fi
+
+    # ---
+    # output dir is not given. modify filename to become
+    # cropped__{filename} and put it in
+    # the same directory.
+    # ---
+
+    dir_name=$(dirname "$filename")
+
+    # get filename with extension
+    filename_with_ext=$(basename "$filename")
+
+    # extract extension
+    ext="${filename_with_ext##*.}"
+
+    cropped_file=cropped--$filename
+    convert $filename -crop $crop_geometry $dir_name/$cropped_file
+    echo "$filename → $cropped_file"
+done

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+if [ "$1" = "-h" ]; then
+    echo "httpdump –– create http server using socat that response anything with 'OK'"
+    echo "usage: httpdump [optional port - defaults to 8080]"
+    echo "example:"
+    echo "- run httpdump server on default port (8080):"
+    echo "  httpdump"
+    echo "- run httpdump server on port 9999:"
+    echo "  httpdump 9999"
+    exit
+fi
+
+PORT=8080
+if [ ! -z "$1" ]; then
+	PORT=$1
+fi
+
+echo "httpdump is running at port :${PORT}. press ctrl+c to stop."
+echo ""
+
+socat -v -d \
+    TCP-LISTEN:${PORT},crlf,reuseaddr,fork \
+    SYSTEM:"
+        echo HTTP/1.1 200 OK; 
+        echo Content-Type\: text/plain; 
+        echo; 
+        echo \"OK\";
+    "

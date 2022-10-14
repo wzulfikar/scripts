@@ -1,0 +1,24 @@
+#!/bin/sh
+
+app_path=$1
+
+bundle_name=$(cat "${app_path}/Contents/Info.plist" | awk '/CFBundleName/ { getline; gsub(/<string>|<\/string>|(^\t+)/, ""); print $0; }')
+bin_name=$(cat "$app_path"/Contents/Info.plist | awk '/CFBundleExecutable/ { getline; gsub(/<string>|<\/string>|(^\t+)/, ""); print $0; }')
+
+# if exists, use `defaults read` to read Info.plist
+if hash defaults 2>/dev/null; then
+	bin_name=$(defaults read "${app_path}/Contents/Info.plist" CFBundleExecutable)
+fi
+
+bin_dir="${app_path}/Contents/MacOS"
+
+if [ -f "$bin_dir/$bin_name" ]; then
+	exec_path="$bin_dir/$bin_name"
+elif [ -f "$bin_dir/$bundle_name" ]; then
+	exec_path="$bin_dir/$bundle_name"
+else
+	echo "[ERROR] could not find executable path."
+	exit 1;
+fi
+
+echo "$exec_path" | awk '{gsub(" ", "\\ "); print $0;}'

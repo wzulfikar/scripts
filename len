@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+
+# usage:
+# 1. adjust file permission (if you have not): `chmod +x len`
+# 2. copy or link this file to your path (ie. `ln -s len /usr/local/bin`)
+# 3. run len <string>
+
+if [ -z "$1" ]; then
+    echo "len –– get length of passed argument (ie. string)"
+    echo "usage: len <string>"
+    exit
+fi
+
+NC='\033[0m' # no color
+ORANGE='\033[0;33m'
+
+for arg in "$@" # `$@` represents all arguments
+do
+    echo "\"$ORANGE$arg$NC\" is $ORANGE${#arg}$NC chars long"
+done

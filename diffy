@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# usage:
+# 1. adjust file permission (if you have not): `chmod +x diffy`
+# 2. copy or link this file to your path (ie. `ln -s diffy /usr/local/bin`)
+# 3. run diffy to upload your `git diff` to diffy
+if [ "$1" = "-h" ]; then
+    echo "diffy –– upload output of git diff to diffy.org"
+    echo "usage: diffy [diff command (optional)]"
+    echo ""
+    echo "examples:"
+    echo "- upload diff from 'git diff' of current directory:"
+    echo "  diffy"
+    echo "- upload diff from 'git diff' of files outside git repo:"
+    echo "  diffy --no-index file-a.txt file-b.txt"
+    exit
+fi
+
+# verify dependencies
+hash git 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS git"; }
+hash curl 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS curl"; }
+hash xargs 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS xargs"; }
+if [ ! -z "$MISSING_DEPS" ]; then
+    echo "whoops! missing dependencies:"
+    echo $MISSING_DEPS
+    exit
+fi
+
+# ensure current dir is git repo if `--no-index` is not used
+if [ "$2" != "--no-index" ] && [ ! git rev-parse --git-dir > /dev/null 2>&1 ]; then
+    echo "diffy error: directory is not git repo"
+    exit
+fi
+
+# store output of `git diff` to DIFF_FILE
+DIFF_FILE=/tmp/to_diffy.diff
+
+DIFF_COMMAND=$(echo "git diff $@" | xargs)
+`$DIFF_COMMAND > $DIFF_FILE`
+
+if [ -z "$(cat $DIFF_FILE)" ]; then
+    echo "command '$DIFF_COMMAND' returns empty output. exiting."
+    exit
+fi
+
+echo "uploading output of '$DIFF_COMMAND' to diffy.org.."
+
+# sample response:
+# Found. Redirecting to /diff/4hrag1lvv7lgyt81v6t0fqolxr
+diffy_response=`curl -s -F diffFile=@$DIFF_FILE https://diffy.org/new`
+
+# shell won't understand below string substition. 
+# use bash instead.
+replacer=https\://diffy.org/diff
+echo "${diffy_response/\/diff/$replacer}"

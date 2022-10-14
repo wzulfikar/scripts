@@ -1,0 +1,31 @@
+#!/usr/bin/env sh
+
+# usage:
+# 1. adjust file permission (if you have not): `chmod +x eq`
+# 2. copy or link to your path, ie. `ln -s eq /usr/local/bin`
+# 3. run `eq helloworld helloworld`
+
+# display usage info
+if [ "$1" == "-h" ] || [ -z "$1" ]; then
+    echo "pdftojpg –– convert pdf to jpg using imagemagick"
+    echo "usage: pdftojpg <pdffile>"
+    echo "example: pdftojpg my-pdf-file.pdf"
+    exit
+fi
+
+# ensure pdf file exists
+if [ ! -f "$1" ]; then
+    echo "Error: cannot find pdf file '$1'"
+    exit
+fi
+
+PDFFILE=$1
+OUT=$2
+
+if [ -z "$2" ]; then
+    OUT=$PDFFILE.jpg
+fi
+
+echo "- converting pdf file to jpg.."
+convert -density 300 -trim $PDFFILE -quality 100 $OUT
+echo "✔ Done! $OUT"

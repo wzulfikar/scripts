@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# install pdfcpu: go get github.com/pdfcpu/pdfcpu/cmd/...
+# download pdfcpu binary: https://github.com/pdfcpu/pdfcpu/releases
+
+hash pdfcpu 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS pdfcpu"; }
+if [ ! -z "$MISSING_DEPS" ]; then
+	echo "[ERROR] missing dependencies:"
+	echo $MISSING_DEPS
+	exit
+fi
+
+SCRIPT=$(basename $0)
+if [ -z "$1" ]; then
+    echo "$SCRIPT encrypts given pdf file using pdfcpu binary."
+    echo "usage: $SCRIPT <pdf file> [password. default to PDF_PASSWORD env]"
+    echo "example: $SCRIPT ~/Desktop/account-statement.pdf my-password"
+    echo ""
+    echo "use '-r' to remove password protection from pdf file:"
+    echo "example: $SCRIPT <pdf file> -r [password]"
+    exit
+fi
+
+FILE=$1
+
+# in decrypt mode (removing password protection),
+# shift position of PDF_PASSWORD arg from $2 to $3.
+# decrypt mode is activated by passing `-d` flag.
+if [ "$2" != "-d" ]; then
+    PDF_PASSWORD=${2:-$PDF_PASSWORD}
+else
+    PDF_PASSWORD=${3:-$PDF_PASSWORD}
+    DECRYPT_FILE=true
+fi
+
+if [ -z "$PDF_PASSWORD" ]; then
+    echo "[ERROR] password must be supplied if PDF_PASSWORD env is empty."
+    exit 1
+fi
+
+if [ "$DECRYPT_FILE" = "true" ]; then
+    echo "[INFO] removing password protection from pdf file"
+    pdfcpu decrypt -upw $PDF_PASSWORD -opw $PDF_PASSWORD "$FILE"
+else
+    if [ "$2" != "" ]; then
+        echo "[INFO] encrypting pdf using user-specified password"
+    else
+        echo "[INFO] encrypting pdf using PDF_PASSWORD env var"
+    fi
+    pdfcpu encrypt -upw $PDF_PASSWORD -opw $PDF_PASSWORD "$FILE"
+fi

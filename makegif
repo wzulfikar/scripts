@@ -1,0 +1,67 @@
+#!/bin/sh
+
+# video to convert to gif
+input_file=$1
+output_file="$1.gif"
+
+fps_default=8
+scale_default=640
+
+scale=${2:-${scale_default}}
+fps=${3:-${fps_default}}
+
+if [ -z "$1" ] || [ "$1" = "-h" ]; then
+	echo "$(basename $0) converts given video file to GIF using ffmpeg."
+	echo "GIF output will be stored in the same directory of video file."
+	echo "usage: $(basename $0) <video file> [scale] [fps]"
+	echo "examples:"
+	echo "- convert video to GIF of default scale ($fps_default) & fps ($scale_default):"
+	echo "  $(basename $0) my-video.mp4"
+	echo "- specify custom scale & fps:"
+	echo "  $(basename $0) my-video.mp4 320 24"
+	exit
+fi
+
+# verify dependencies
+hash ffmpeg 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS ffmpeg"; }
+if [ ! -z "$MISSING_DEPS" ]; then
+    echo "[ERROR] missing dependencies:"
+    echo $MISSING_DEPS
+    exit
+fi
+
+echo "[INFO] making gif.."
+echo "output file: $output_file"
+
+if [ "$scale" = "$scale_default" ]; then
+	echo "scale: ${scale} (default)"
+else
+	echo "scale: ${scale}"
+fi
+
+if [ "$fps" = "$fps_default" ]; then
+	echo "fps: ${fps} (default)"
+else
+	echo "fps: ${fps}"
+fi
+
+echo ""
+
+# adopted from http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
+palette="/tmp/palette.png"
+filters="fps=${fps},scale=${scale}:-1:flags=lanczos"
+
+# create palette
+ffmpeg \
+-i "$input_file" \
+-loglevel panic -hide_banner -nostats \
+-vf "$filters,palettegen" \
+-y "$palette"
+
+# create gif
+ffmpeg \
+-i "$input_file" \
+-loglevel panic -hide_banner -nostats \
+-i $palette \
+-lavfi "$filters [x]; [x][1:v] paletteuse" \
+-y "$output_file"

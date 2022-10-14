@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ "$1" = "-h" ]; then
+    echo "curljson –– execute curl with json application header"
+    echo "usage: curljson <curl argrs>"
+    exit
+fi
+
+curl -H 'Content-Type: application/json' $@ | jq

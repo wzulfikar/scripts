@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+
+# eg. `watch-sh '*.php' 'say ha'`
+
+if [ -z "$1" ]; then
+    echo "watchsh –– watch directory and run command on change"
+    echo "usage: watchsh <command> <pattern to watch>"
+    echo ""
+    echo "examples:"
+    echo "  watchsh pytest *.py"
+    echo "  watchsh phpunit *.php"
+    echo ""
+    echo "dependencies:"
+    echo "  entr - run tests whenever files change (https://github.com/clibs/entr)"
+    exit
+fi
+
+WATCH_DIR=$2
+if [ -z "$WATCH_DIR" ] || [ "$WATCH_DIR" == "." ]; then
+    WATCH_DIR=.
+    FILES="find ."
+elif [ -f "$WATCH_DIR" ]; then
+    FILES="find $WATCH_DIR"
+else
+    FILES="find . -name $WATCH_DIR"
+fi
+
+echo "Watching changes on '$WATCH_DIR' to trigger '$1'..\nPress ctrl+c to exit."
+if [ $($FILES | wc -l) -eq 0 ]; then
+    echo "[ERROR] cannot find any file from '$WATCH_DIR'"
+    exit
+fi
+
+eval "${FILES} | entr sh -c \"$1; printf '$MSG';\""

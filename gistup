@@ -1,0 +1,8 @@
+#!/bin/sh
+
+hash gh 2>/dev/null || { echo "ERROR: missing dependencies: 'gh'" && exit 1; } # check dependencies
+
+echo "Updating Github gist.."
+gh gist edit $1 -f $2 $3
+
+echo "Done! https://gist.github.com/${1}"
