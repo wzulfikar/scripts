@@ -34,6 +34,19 @@ Collection of scripts I use often. Installation:
 
   Example: [`gistup`](https://github.com/wzulfikar/scripts/blob/main/gistup), [`collate`](https://github.com/wzulfikar/scripts/blob/main/collate)
 
+- Use `MISSING_DEPS` to check multiple dependencies:
+
+  ```sh
+  # check dependencies
+  hash convert 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS convert"; }
+  hash tesseract 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS tesseract"; }
+  [ ! -z "$MISSING_DEPS" ] && echo "ERROR: missing dependencies: ${MISSING_DEPS}" && exit 1
+
+  # ... run the actual script
+  ```
+
+  Example: [`ocr`](https://github.com/wzulfikar/scripts/blob/main/ocr)
+
 - Use `$(basename $0)` to display the script name:
 
   ```sh
