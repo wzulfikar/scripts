@@ -4,20 +4,15 @@ input_file=$1
 output_file="$1.mp4"
 
 if [ -z "$1" ] || [ "$1" = "-h" ]; then
-	echo "$(basename $0) converts given file (.mov, .gif, etc.) to .mp4 using ffmpeg."
-	echo "the output will be stored in the same directory of input file."
-	echo "usage: $(basename $0) <input file>"
-	echo "example: $(basename $0) my-screencast.mov"
-	exit
+  echo "$(basename $0) – converts given file (.mov, .gif, etc.) to .mp4 using ffmpeg."
+  echo "The output will be stored in the same directory of input file."
+  echo "Usage: $(basename $0) <input file>"
+  echo "Example: $(basename $0) my-screencast.mov"
+  exit
 fi
 
 # verify dependencies
-hash ffmpeg 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS ffmpeg"; }
-if [ ! -z "$MISSING_DEPS" ]; then
-    echo "[ERROR] missing dependencies:"
-    echo $MISSING_DEPS
-    exit
-fi
+hash ffmpeg 2>/dev/null || { echo "ERROR: missing dependencies: 'ffmpeg'" && exit 1; } # check dependencies
 
 echo "[INFO] making mp4.."
 echo "output file: $output_file"

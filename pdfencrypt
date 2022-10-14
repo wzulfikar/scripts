@@ -3,21 +3,15 @@
 # install pdfcpu: go get github.com/pdfcpu/pdfcpu/cmd/...
 # download pdfcpu binary: https://github.com/pdfcpu/pdfcpu/releases
 
-hash pdfcpu 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS pdfcpu"; }
-if [ ! -z "$MISSING_DEPS" ]; then
-	echo "[ERROR] missing dependencies:"
-	echo $MISSING_DEPS
-	exit
-fi
+hash pdfcpu 2>/dev/null || { echo "ERROR: missing dependencies: 'pdfcpu'" && exit 1; } # check dependencies
 
-SCRIPT=$(basename $0)
 if [ -z "$1" ]; then
-    echo "$SCRIPT encrypts given pdf file using pdfcpu binary."
-    echo "usage: $SCRIPT <pdf file> [password. default to PDF_PASSWORD env]"
-    echo "example: $SCRIPT ~/Desktop/account-statement.pdf my-password"
+    echo "$(basename $0) encrypts given pdf file using pdfcpu binary."
+    echo "usage: $(basename $0) <pdf file> [password. default to PDF_PASSWORD env]"
+    echo "example: $(basename $0) ~/Desktop/account-statement.pdf my-password"
     echo ""
     echo "use '-r' to remove password protection from pdf file:"
-    echo "example: $SCRIPT <pdf file> -r [password]"
+    echo "example: $(basename $0) <pdf file> -r [password]"
     exit
 fi
 

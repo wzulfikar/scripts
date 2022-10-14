@@ -18,13 +18,7 @@ if [ -z "$output" ]; then
     output="collated.pdf"
 fi
 
-# verify dependencies
-hash convert 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS convert"; }
-if [ ! -z "$MISSING_DEPS" ]; then
-    echo "whoops! missing dependencies:"
-    echo $MISSING_DEPS
-    exit
-fi
+hash convert 2>/dev/null || { echo "ERROR: missing dependencies: 'convert'" && exit 1; } # check dependencies
 
 convert "$1" $output
 echo "collate command finished. output: $output"

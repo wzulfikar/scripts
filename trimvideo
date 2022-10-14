@@ -1,32 +1,31 @@
 #!/bin/sh
 
-script=$(basename $0)
 if [ "$#" -lt "2" ] || [ "$1" = "-h" ]; then
-	echo "${script} trim given video file (.mov, .mp4) using ffmpeg."
-	echo "the output will be stored in the same directory of input file."
-	echo "usage: ${script} <video file> <start time> [optional end time]"
-	echo "example: ${script} my-screencast.mov 00:00:15 00:01:00"
-	exit
+    echo "$(basename $0) trim given video file (.mov, .mp4) using ffmpeg."
+    echo "The output will be stored in the same directory of input file."
+    echo "usage: $(basename $0) <video file> <start time> [optional end time]"
+    echo "example: $(basename $0) my-screencast.mov 00:00:15 00:01:00"
+    exit
 fi
 
 input_file=$1
 ext="${input_file##*.}"
-output_file=$(echo "$input_file"| sed "s/$ext/trimmed.$ext/")
+output_file=$(echo "$input_file" | sed "s/$ext/trimmed.$ext/")
 
 start_time=$2
 end_time=$3
 
 if [ -z "$end_time" ]; then
     ffmpeg -i "$input_file" \
-    -loglevel panic -hide_banner -nostats \
-    -ss "$start_time" \
-    -c:v copy -c:a copy "$output_file"
+        -loglevel panic -hide_banner -nostats \
+        -ss "$start_time" \
+        -c:v copy -c:a copy "$output_file"
 else
     ffmpeg -i "$input_file" \
-    -loglevel panic -hide_banner -nostats \
-    -ss "$start_time" \
-    -to "$end_time" \
-    -c:v copy -c:a copy "$output_file"
+        -loglevel panic -hide_banner -nostats \
+        -ss "$start_time" \
+        -to "$end_time" \
+        -c:v copy -c:a copy "$output_file"
 fi
 
 echo "trim completed. output: ${output_file}"

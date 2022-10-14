@@ -18,13 +18,7 @@ if [ -z "$1" ] || [ "$1" = "-h" ]; then
     echo "selected area 550px to right and 120px to bottom"
 fi
 
-# verify dependencies
-hash convert 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS convert"; }
-if [ ! -z "$MISSING_DEPS" ]; then
-    echo "whoops! missing dependencies:"
-    echo $MISSING_DEPS
-    exit
-fi
+hash convert 2>/dev/null || { echo "ERROR: missing dependencies: 'convert'" && exit 1; } # check dependencies
 
 current_dir=$(pwd)
 
