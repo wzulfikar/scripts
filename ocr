@@ -25,24 +25,20 @@ __extract_text() {
 }
 
 if [ -z "$1" ] || [ "$1" = "-h" ] || [ -z "$2" ]; then
-    echo "ocr –– run ocr on given file (or files in directory)"
-    echo "usage: ocr <path to file or directory> <output dir>"
-    echo "example: ocr ~/Downloads/my-document.jpg ."
+    echo "$(basename $0) – run ocr on given file (or files in directory)"
+    echo "Usage: $(basename $0) <path to file or directory> <output dir>"
+    echo "Example: $(basename $0) ~/my-document.jpg ."
     exit
 fi
 
-# verify dependencies
+# check dependencies
 hash convert 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS convert"; }
 hash tesseract 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS tesseract"; }
-if [ ! -z "$MISSING_DEPS" ]; then
-    echo "whoops! missing dependencies:"
-    echo $MISSING_DEPS
-    exit
-fi
+[ ! -z "$MISSING_DEPS" ] && echo "ERROR: missing dependencies: ${MISSING_DEPS}" && exit 1
 
 # handle directory
-if [ -d "$1" ] ; then
-    for file in "$1"/*.{jpg,jpeg,png} ; do
+if [ -d "$1" ]; then
+    for file in "$1"/*.{jpg,jpeg,png}; do
         # don't process if filename begins with "*."
         if [[ $file = *"/*."* ]]; then
             continue
@@ -69,7 +65,7 @@ if [ -f "$1" ]; then
     else
         echo "File not supported. Only jpg, jpeg & png are supported."
     fi
-exit
+    exit
 fi
 
 echo "operation failed: unhandled error"

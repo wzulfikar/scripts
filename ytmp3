@@ -12,11 +12,11 @@
 
 # display usage info
 if [ "$1" == "-h" ] || [ -z "$1" ]; then
-    echo "ytmp3 –– download youtube video and convert to mp3"
-    echo "usage: ytmp3 <youtube url/video id> <output dir>"
+    echo "$(basename $0) – download youtube video and convert to mp3"
+    echo "usage: $(basename $0) <youtube url/video id> <output dir>"
     echo "example:"
-    echo "- ytmp3 RXARHZmpgvw ~/Downloads/"
-    echo "- ytmp3 https://www.youtube.com/watch?v=p29JUpsOSTE ~/Downloads/"
+    echo "- $(basename $0) RXARHZmpgvw ~/Downloads/"
+    echo "- $(basename $0) https://www.youtube.com/watch?v=p29JUpsOSTE ~/Downloads/"
     exit
 fi
 
@@ -33,14 +33,10 @@ if [ "$OUTPUT_DIR" != "" ] && [[ "$OUTPUT_DIR" != */ ]]; then
     OUTPUT_DIR="${OUTPUT_DIR}/"
 fi
 
-# verify dependencies
+# check dependencies
 hash ytdl 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS ytdl"; }
 hash ffmpeg 2>/dev/null || { MISSING_DEPS="$MISSING_DEPS ffmpeg"; }
-if [ ! -z "$MISSING_DEPS" ]; then
-    echo "whoops! missing dependencies:"
-    echo $MISSING_DEPS
-    exit 2
-fi
+[ ! -z "$MISSING_DEPS" ] && echo "ERROR: missing dependencies: ${MISSING_DEPS}" && exit 1
 
 # use ytdl to fetch video info.
 # using ytdl v0.5.0, the info would look like this:
@@ -54,7 +50,7 @@ fi
 # the `awk -F': ' 'NR == 1 {print $2}'` will get the first
 # line of video info ('NR == 1'), and take the part of
 # line that comes after ': ' (-F': ').
-FILENAME=`ytdl --info $1 | awk -F': ' 'NR == 1 {print $2}'`
+FILENAME=$(ytdl --info $1 | awk -F': ' 'NR == 1 {print $2}')
 if [ -z "$FILENAME" ]; then
     echo "Download failed: video id '$1' is invalid"
     exit 3
