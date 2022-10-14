@@ -16,7 +16,8 @@ Collection of scripts I use often. Installation:
    export PATH=$GH_SCRIPTS:$PATH
    ```
 
-3. Run `eq` for test run (it checks if two values match):
+3. Run [`eq`](https://github.com/wzulfikar/scripts/blob/main/eq) for test run (it checks if two values match):
+
    ```sh
    eq 123 123
    ```
@@ -31,7 +32,7 @@ Collection of scripts I use often. Installation:
   # ... run the actual script
   ```
 
-  Example: `gistup`, `collate`
+  Example: [`gistup`](https://github.com/wzulfikar/scripts/blob/main/gistup), [`collate`](https://github.com/wzulfikar/scripts/blob/main/collate)
 
 - Use `$(basename $0)` to display the script name:
 
@@ -42,4 +43,4 @@ Collection of scripts I use often. Installation:
   fi
   ```
 
-  Example: `makemp4`, `makegif`
+  Example: [`makemp4`](https://github.com/wzulfikar/scripts/blob/main/makemp4), [`makegif`](https://github.com/wzulfikar/scripts/blob/main/makegif)
