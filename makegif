@@ -5,7 +5,7 @@ input_file=$1
 output_file="$1.gif"
 
 fps_default=8
-scale_default=640
+scale_default=720
 
 scale=${2:-${scale_default}}
 fps=${3:-${fps_default}}
