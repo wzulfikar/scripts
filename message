@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ "$1" = "-h" ] || [ -z "$1" ] || [ -z "$2" ]; then
+  echo "$(basename $0) – Send text message using Messages.app"
+  echo "usage: $(basename $0) phone_number 'some message'"
+  exit 0
+fi
+
+hash osascript 2>/dev/null || { echo "ERROR: 'osascript' is missing. This script only supports macOS." && exit 1; }
+
+phone_number=$1
+message=$2
+
+osascript <<END
+  tell application "Messages"
+    set recipient to "$phone_number"
+    set targetService to id of 1st account whose service type = iMessage
+    set targetBuddy to participant recipient of account id targetService
+    send "$message" to targetBuddy
+  end tell
+  log "Message sent"
+END
