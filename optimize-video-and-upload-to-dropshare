@@ -1,0 +1,28 @@
+#!/bin/sh
+
+file=$1
+
+[ -z $file ] && echo "Usage: $(basename $0) some-video.mov" && exit 0;
+
+# Don't do anything if file is not .mov
+[ -z $(echo "$file" | grep '.mov$') ] && exit 0;
+
+# Show error if makemp4 is missing
+hash makemp4 2>/dev/null || { osascript -e "display dialog \"Could not convert .mov to .mp4: 'makemp4' is missing" && exit 1; }
+
+echo "Optmizing video.."
+makemp4 "$file"
+
+optimized_file="${file}.mp4"
+
+# Show error if dropshare cli (ds) is missing
+hash ds 2>/dev/null || { osascript -e "display dialog \"Could not upload video to dropshare: 'ds' is missing" && exit 1; }
+
+# Upload optimized file to dropshare
+echo "Sending video to dropshare.."
+ds "$optimized_file"
+
+echo "Deleting original file.."
+trash "$file"
+
+echo "Done!"
