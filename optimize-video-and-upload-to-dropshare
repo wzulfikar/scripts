@@ -10,7 +10,7 @@ file=$1
 # Show error if makemp4 is missing
 hash makemp4 2>/dev/null || { osascript -e "display dialog \"Could not convert .mov to .mp4: 'makemp4' is missing" && exit 1; }
 
-echo "Optmizing video.."
+echo "Optimizing video.."
 makemp4 "$file"
 
 optimized_file="${file}.mp4"
