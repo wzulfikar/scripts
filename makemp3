@@ -15,7 +15,6 @@ echo "[INFO] making mp3.."
 counter=0
 for file in "$@"; do
   ((counter++))
-
   input_file=$file
   output_file="$file.mp3"
   echo "file ${counter} of ${#}: $(basename $output_file)"
@@ -23,7 +22,7 @@ for file in "$@"; do
   # Check extension and skip if not mov/mp4
   ext=$(echo ${input_file##*.} | tr '[:upper:]' '[:lower:]')
   if [ "$ext" != "mov" ] && [ "$ext" != "mp4" ]; then
-    echo "  skipped: file is neither .mp4 nor .mov"
+    echo "  skipped: extension must be .mov or .mp4"
     continue
   fi
 
