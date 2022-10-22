@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" = "-h" ]; then
+  echo "$(basename $0) – converts given video file (.mov, .mp4) to .mp3 using ffmpeg."
+  echo "The output will be stored in the same directory of input file."
+  echo "Usage: $(basename $0) <input_file1> <input_file2> ..."
+  echo "Example: $(basename $0) my-screencast.mov"
+  exit
+fi
+
+hash ffmpeg 2>/dev/null || { echo "ERROR: missing dependencies: 'ffmpeg'" && exit 1; } # check dependencies
+
+echo "[INFO] making mp3.."
+
+counter=0
+for file in "$@"; do
+  ((counter++))
+
+  input_file=$file
+  output_file="$file.mp3"
+  echo "file ${counter} of ${#}: $(basename $output_file)"
+
+  # Check extension and skip if not mov/mp4
+  ext=$(echo ${input_file##*.} | tr '[:upper:]' '[:lower:]')
+  if [ "$ext" != "mov" ] && [ "$ext" != "mp4" ]; then
+    echo "  skipped: file is neither .mp4 nor .mov"
+    continue
+  fi
+
+  # adapted from https://rigor.com/blog/optimizing-animated-gifs-with-html5-video
+  time ffmpeg \
+    -i "$input_file" \
+    -hide_banner -loglevel error \
+    -b:a 192K -vn \
+    "$output_file"
+done
+
+echo "Done!"
