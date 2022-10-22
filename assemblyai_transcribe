@@ -1,0 +1,27 @@
+#!/bin/sh
+
+if [ -z "$1" ] || [ "$1" = "-h" ]; then
+  echo "$(basename $0) – transcribe given mp3 file using assembly.ai"
+  echo "The output will be stored in the same directory of input file."
+  echo "Usage: $(basename $0) <input_file1>"
+  echo "Example: $(basename $0) my-screencast.mp3"
+  exit
+fi
+
+[ -z "$ASSEMBLYAI_API_KEY" ] && echo "ERROR: missing environment variable: 'ASSEMBLYAI_API_TOKEN'" && exit 1 # check required environment variables
+
+hash curl 2>/dev/null || { echo "ERROR: missing dependency: 'curl'" && exit 1; } # check dependencies
+hash sed 2>/dev/null || { echo "ERROR: missing dependency: 'jq'" && exit 1; }    # check dependencies
+
+upload_endpoint=https://api.assemblyai.com/v2/upload
+transcribe_endpoint=https://api.assemblyai.com/v2/transcript
+
+# Upload file to create audio url
+echo "Uploading audio file.."
+audio_url=$(curl -H authorization:$ASSEMBLYAI_API_KEY -H Transfer-Encoding:Chunked -XPOST $upload_endpoint -d @"$1")
+echo "File uploaded: $audio_url"
+
+# Transcribe the audio
+echo "Transcribing audio.."
+payload=$(echo $audio_url | sed s/upload_url/audio_url/)
+curl -H authorization:$ASSEMBLYAI_API_KEY -H content-type:application/json -XPOST $transcribe_endpoint -d "$payload"
