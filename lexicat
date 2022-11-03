@@ -8,7 +8,7 @@ if [ -z "$1" ] || [ "$1" = "-h" ]; then
   exit
 fi
 
-IMGCAT=~/.iterm2/imgcat
+IMGCAT=~/.iterm2/imgcat # See https://iterm2.com/documentation-images.html for reference
 [ -f $IMGCAT ] || { echo "ERROR: missing dependencies: 'imgcat'" && exit 1; }
 
 hash curl 2>/dev/null || { echo "ERROR: missing dependencies: 'curl'" && exit 1; } # check dependencies
@@ -16,7 +16,7 @@ hash jq 2>/dev/null || { echo "ERROR: missing dependencies: 'jq'" && exit 1; }
 hash md5 2>/dev/null || { echo "ERROR: missing dependencies: 'md5'" && exit 1; }
 hash date 2>/dev/null || { echo "ERROR: missing dependencies: 'date'" && exit 1; }
 
-base_url="https://lexica.art/api/v1/search"
+base_url="https://lexica.art/api/v1/search" # See https://lexica.art/docs for reference
 query="$@"
 
 # Prepare json file for cache
@@ -29,23 +29,28 @@ if [ ! -f "$json_file" ]; then
   cache_miss=1
 fi
 
+# Pick random image from json
 json=$(cat $json_file)
 count_images=$(echo $json | jq '.images | length')
-
-# Pick random image from json
 random_image="$(($RANDOM % $count_images))"
+
+# Use jq to extract values for thumbnail and prompt id
 thumbnail_url=$(echo $json | jq -r ".images[$random_image].srcSmall")
 prompt_id=$(echo $json | jq -r ".images[$random_image].promptid")
 
 # Download the image
 curl -o /tmp/lexicat --silent $thumbnail_url
 
-# Display the image
-$IMGCAT -H 250px /tmp/lexicat
+# Display the image with imgcat (default height 300px)
+$IMGCAT -H ${HEIGHT:-300px} /tmp/lexicat
 
+# URL to view the prompt in browser
 view_url="https://lexica.art/prompt/$prompt_id"
 
+# We know that curl is available so might as well use it to encode the query
 encode_query=$(curl -s -w '%{url}\n' -G / --data-urlencode "=$query" | cut -c 3-)
+
+# URL to open Lexica home page with search input pre-filled
 search_url="https://lexica.art/?q=$encode_query"
 
 if [ "$cache_miss" ]; then
