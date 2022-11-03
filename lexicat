@@ -59,4 +59,4 @@ else
   echo "- 📁 JSON file (cached): $json_file"
 fi
 echo "- 🌐 View in browser: $view_url"
-echo "- 🔍 Search in lexica.art: $search_url"
+echo "- 🔍 Search in Lexica: $search_url"
