@@ -31,5 +31,5 @@ curl -o /tmp/lexicat --silent $thumbnail_url
 # Display the image
 $IMGCAT -H 250px /tmp/lexicat
 
-view_url="https://lexica.art/?prompt=$prompt_id"
+view_url="https://lexica.art/prompt/$prompt_id"
 echo "View in browser: $view_url"
