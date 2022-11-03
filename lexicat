@@ -39,7 +39,7 @@ thumbnail_url=$(echo $json | jq -r ".images[$random_image].srcSmall")
 prompt_id=$(echo $json | jq -r ".images[$random_image].promptid")
 
 # Download the image
-curl -o /tmp/lexicat --silent $thumbnail_url
+curl -o /tmp/lexicat.jpg --silent $thumbnail_url
 
 # Display the image with imgcat (default height 300px)
 $IMGCAT -H ${HEIGHT:-300px} /tmp/lexicat.jpg
