@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" = "-h" ]; then
+  echo "$(basename $0) – display image from lexica in terminal"
+  echo "The output will be stored in /tmp/lexicat. You'll need 'imgcat' to display the image in terminal."
+  echo "Usage: $(basename $0) <prompt>"
+  echo "Example: $(basename $0) slice of apple below a table"
+  exit
+fi
+
+IMGCAT=~/.iterm2/imgcat
+
+hash curl 2>/dev/null || { echo "ERROR: missing dependencies: 'curl'" && exit 1; } # check dependencies
+hash jq 2>/dev/null || { echo "ERROR: missing dependencies: 'jq'" && exit 1; }
+hash $IMGCAT 2>/dev/null || { echo "ERROR: missing dependencies: 'imgcat'" && exit 1; }
+
+base_url="https://lexica.art/api/v1/search"
+
+# Get images from Lexica API
+json=$(curl --silent --get --data-urlencode "q=$@" "$base_url")
+count_images=$(echo $json | jq '.images | length')
+
+# Pick random image from json
+random_image="$(($RANDOM % $count_images))"
+thumbnail_url=$(echo $json | jq -r ".images[$random_image].srcSmall")
+prompt_id=$(echo $json | jq -r ".images[$random_image].promptid")
+
+# Download the image
+curl -o /tmp/lexicat --silent $thumbnail_url
+
+# Display the image
+$IMGCAT -H 250px /tmp/lexicat
+
+view_url="https://lexica.art/?prompt=$prompt_id"
+echo "View in browser: $view_url"
