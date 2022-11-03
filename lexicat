@@ -2,7 +2,7 @@
 
 if [ -z "$1" ] || [ "$1" = "-h" ]; then
   echo "$(basename $0) – display image from lexica in terminal"
-  echo "The output will be stored in /tmp/lexicat. You'll need 'imgcat' to display the image in terminal."
+  echo "The output will be stored in /tmp/lexicat.jpg. You'll need 'imgcat' to display the image in terminal."
   echo "Usage: $(basename $0) <prompt>"
   echo "Example: $(basename $0) slice of apple below a table"
   exit
@@ -42,7 +42,7 @@ prompt_id=$(echo $json | jq -r ".images[$random_image].promptid")
 curl -o /tmp/lexicat --silent $thumbnail_url
 
 # Display the image with imgcat (default height 300px)
-$IMGCAT -H ${HEIGHT:-300px} /tmp/lexicat
+$IMGCAT -H ${HEIGHT:-300px} /tmp/lexicat.jpg
 
 # URL to view the prompt in browser
 view_url="https://lexica.art/prompt/$prompt_id"
