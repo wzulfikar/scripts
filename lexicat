@@ -9,10 +9,10 @@ if [ -z "$1" ] || [ "$1" = "-h" ]; then
 fi
 
 IMGCAT=~/.iterm2/imgcat
+[ -f $IMGCAT ] || { echo "ERROR: missing dependencies: 'imgcat'" && exit 1; }
 
 hash curl 2>/dev/null || { echo "ERROR: missing dependencies: 'curl'" && exit 1; } # check dependencies
 hash jq 2>/dev/null || { echo "ERROR: missing dependencies: 'jq'" && exit 1; }
-hash $IMGCAT 2>/dev/null || { echo "ERROR: missing dependencies: 'imgcat'" && exit 1; }
 
 base_url="https://lexica.art/api/v1/search"
 
