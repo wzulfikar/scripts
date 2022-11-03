@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" = "-h" ]; then
+  echo "$(basename $0) – display image from lexica in terminal"
+  echo "Description of the script"
+  echo "Usage: $(basename $0) <prompt>"
+  echo "Example: $(basename $0) slice of apple below a table"
+  exit
+fi
+
+# check dependencies
+hash curl 2>/dev/null || { echo "ERROR: missing dependencies: 'curl'" && exit 1; }
+
+# Add the actual script below..
