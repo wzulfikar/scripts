@@ -3,6 +3,13 @@
 input_file=$1
 output_file="$1.mp4"
 
+# Customize thread count by passing `THREADS_COUNT` as environment variable.
+DEFAULT_THREADS_COUNT=0
+THREADS_COUNT=${THREADS_COUNT:-$DEFAULT_THREADS_COUNT}
+if [ "$THREADS_COUNT" != "$DEFAULT_THREADS_COUNT" ]; then
+  echo "[INFO] using custom value for '-threads:v': ${THREADS_COUNT}"
+fi
+
 if [ -z "$1" ] || [ "$1" = "-h" ]; then
   echo "$(basename $0) – convert video file (.mov, .mp4) to an optimized mp4 using ffmpeg."
   echo "The output will be stored in the same directory of input file."
@@ -18,12 +25,12 @@ echo "[INFO] making mp4.."
 counter=0
 for file in "$@"; do
   ((counter++))
-  input_file=$file
+  input_file="$file"
   output_file="$file.mp4"
-  echo "file ${counter} of ${#}: $(basename $output_file)"
+  echo "- file ${counter} of ${#}: $(basename "$input_file")"
 
   # Check extension and skip if not mov/mp4
-  ext=$(echo ${input_file##*.} | tr '[:upper:]' '[:lower:]')
+  ext=$(echo "${input_file##*.}" | tr '[:upper:]' '[:lower:]')
   if [ "$ext" != "mov" ] && [ "$ext" != "mp4" ]; then
     echo "  skipped: extension must be .mov or .mp4"
     continue
@@ -34,6 +41,7 @@ for file in "$@"; do
     -i "$input_file" \
     -movflags faststart \
     -pix_fmt yuv420p \
+    -threads:v $THREADS_COUNT \
     -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" \
     -hide_banner -loglevel error \
     "$output_file"
