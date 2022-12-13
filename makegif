@@ -24,6 +24,13 @@ fi
 
 hash ffmpeg 2>/dev/null || { echo "ERROR: missing dependencies: 'ffmpeg'" && exit 1; } # check dependencies
 
+# Check extension and skip if not mov/mp4/mkv
+ext=$(echo "${input_file##*.}" | tr '[:upper:]' '[:lower:]')
+if [ "$ext" != "mov" ] && [ "$ext" != "mp4" ] && [ "$ext" != "mkv" ]; then
+  echo "[ERROR] extension must be .mov, .mp4, or .mkv"
+  exit
+fi
+
 echo "[INFO] making gif.."
 echo "output file: $output_file"
 

@@ -29,9 +29,9 @@ for file in "$@"; do
   output_file="$file.mp4"
   echo "- file ${counter} of ${#}: $(basename "$input_file")"
 
-  # Check extension and skip if not mov/mp4
+  # Check extension and skip if not mov/mp4/mkv
   ext=$(echo "${input_file##*.}" | tr '[:upper:]' '[:lower:]')
-  if [ "$ext" != "mov" ] && [ "$ext" != "mp4" ]; then
+  if [ "$ext" != "mov" ] && [ "$ext" != "mp4" ] && [ "$ext" != "mkv" ]; then
     echo "  skipped: extension must be .mov or .mp4"
     continue
   fi
