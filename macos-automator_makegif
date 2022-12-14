@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Usage:
+# 1. In the "Automator" app on your Mac, choose File > New
+# 2. Select "Quick Action", then click Choose
+# 3. Search for "Run Shell Script" action and add it
+# 4. Add this code snippet to the shell script:
+#
+# Include the necessary PATH so the commands are detected by Automator
+# export PATH=$PATH:$HOME/code/github/scripts/:/opt/homebrew/bin/
+# THREADS_COUNT=2 macos-automator_optimize-video "$@"
+
+file=$@
+[ -z "$file" ] && echo "Usage: $(basename $0) some-video.mov" && exit 0
+
+# Skip if file is not a video
+[ -z $(echo "$file" | grep -E '(.mp4|.mov|.mkv)$') ] && exit 0
+
+# Show error if makemp4 is missing
+hash makegif 2>/dev/null || { osascript -e "display dialog \"Could not convert to .gif: 'makegif' is missing\"" && exit 1; }
+
+echo "Creating gif.."
+makegif "$file"
