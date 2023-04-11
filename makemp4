@@ -3,6 +3,12 @@
 input_file=$1
 output_file="$1.mp4"
 
+# Add comma to the extra filter. We need the comma because we already use
+# one filter and ffmpeg uses comma to separate multiple filters.
+if [ ! -z "$FFMPEG_FILTER" ]; then
+  FFMPEG_FILTER=", ${FFMPEG_FILTER}"
+fi
+
 # Customize thread count by passing `THREADS_COUNT` as environment variable.
 DEFAULT_THREADS_COUNT=0
 THREADS_COUNT=${THREADS_COUNT:-$DEFAULT_THREADS_COUNT}
@@ -42,7 +48,7 @@ for file in "$@"; do
     -movflags faststart \
     -pix_fmt yuv420p \
     -threads:v $THREADS_COUNT \
-    -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" \
+    -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2 ${FFMPEG_FILTER}" \
     -hide_banner -loglevel error \
     "$output_file"
 done
