@@ -4,6 +4,16 @@
 input_file=$1
 output_file="$1.gif"
 
+# Add comma to the extra filter. We need the comma because we already use
+# one filter and ffmpeg uses comma to separate multiple filters.
+#
+# For example, this command will crop the video by 50 pixels from top and bottom:
+# FFMPEG_FILTER='crop=in_w:in_h-50' makegif my-video.mov
+#
+if [ ! -z "$FFMPEG_FILTER" ]; then
+  FFMPEG_FILTER=", ${FFMPEG_FILTER}"
+fi
+
 fps_default=8
 scale_default=720
 
@@ -50,7 +60,7 @@ echo ""
 
 # adopted from http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
 palette="/tmp/palette.png"
-filters="fps=${fps},scale=${scale}:-1:flags=lanczos"
+filters="fps=${fps},scale=${scale}:-1:flags=lanczos ${FFMPEG_FILTER}"
 
 # create palette
 ffmpeg \
