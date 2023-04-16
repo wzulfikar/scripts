@@ -16,7 +16,10 @@ if [ -z "$1" ]; then
 fi
 
 WATCH_DIR=$2
-if [ -z "$WATCH_DIR" ] || [ "$WATCH_DIR" == "." ]; then
+if [ "$WATCH_DIR" = "-last-arg" ]; then
+    last_arg=$(echo $1 | awk '{print $NF}')
+    FILES="find $last_arg"
+elif [ -z "$WATCH_DIR" ] || [ "$WATCH_DIR" == "." ]; then
     WATCH_DIR=.
     FILES="find ."
 elif [ -f "$WATCH_DIR" ]; then
