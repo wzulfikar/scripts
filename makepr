@@ -1,0 +1,63 @@
+#!/bin/bash
+
+if [ "$1" = "-h" ]; then
+  echo "$(basename $0) – create markdown note for Pull Request."
+  echo "The output will be stored in the same directory of input file."
+  echo "Usage: $(basename $0)"
+  echo "Example: $(basename $0)"
+  exit
+fi
+
+if [ ! -d "./workspace" ]; then
+  echo "Creating workspace directory (one time only)..."
+  mkdir ./workspace
+fi
+
+branchname=$(git branch --show-current)
+branchname_no_suffix=$(echo $branchname | sed 's#wzulfikar/##')
+filepath="./workspace/$(date -I)-pr_$branchname_no_suffix.md"
+
+if [ -f "$filepath" ]; then
+  echo "File already exists: $filepath"
+  exit
+fi
+
+touch $filepath
+
+#region Create template string
+TEMPLATE="Slack/Notion: …
+Branch: $branchname
+PR: …
+
+---
+
+**Goal**: …
+
+Tasks:
+
+- [ ] 
+
+📁 Related files:
+
+- …
+
+🧪 Related tests:
+
+\`\`\`sh
+
+\`\`\`
+
+
+
+
+---
+Notes:
+"
+#endregion
+
+echo "File created: $filepath"
+echo "$TEMPLATE" > $filepath
+code $filepath
+
+echo ""
+echo "Tip: Press cmd+k,shift+enter to pin the file in VSCode."
