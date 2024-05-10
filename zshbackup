@@ -11,3 +11,9 @@ echo "  Done! https://gist.github.com/${GIST_ID_ALIASES}"
 echo "- Updating gist for ~/.zshrc"
 gh gist edit ${GIST_ID_ZSHRC} -f .zshrc ~/.zshrc
 echo "  Done! https://gist.github.com/${GIST_ID_ZSHRC}"
+
+# .nanorc
+[ -z "$GIST_ID_NANORC" ] && echo "ERROR: Missing env var 'GIST_ID_NANORC'" && exit 1
+echo "- Updating gist for ~/.nanorc"
+gh gist edit ${GIST_ID_NANORC} -f .nanorc ~/.nanorc
+echo "  Done! https://gist.github.com/${GIST_ID_NANORC}"
