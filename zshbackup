@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# .aliases
+[ -z "$GIST_ID_ALIASES" ] && echo "ERROR: Missing env var 'GIST_ID_ALIASES'" && exit 1
+echo "- Updating gist for ~/.aliases"
+gh gist edit ${GIST_ID_ALIASES} -f .aliases ~/.aliases
+echo "  Done! https://gist.github.com/${GIST_ID_ALIASES}"
+
+# .zshrc
+[ -z "$GIST_ID_ZSHRC" ] && echo "ERROR: Missing env var 'GIST_ID_ZSHRC'" && exit 1
+echo "- Updating gist for ~/.zshrc"
+gh gist edit ${GIST_ID_ZSHRC} -f .zshrc ~/.zshrc
+echo "  Done! https://gist.github.com/${GIST_ID_ZSHRC}"
