@@ -25,33 +25,30 @@ fi
 touch $filepath
 
 #region Create template string
-TEMPLATE="Slack/Notion: …
+TEMPLATE="Slack/Notion: here
 Branch: $branchname
-PR: …
+PR: here
 
 ---
 
 **Goal**: …
 
-Tasks:
+#### Tasks
 
 - [ ] 
 
-📁 Related files:
+#### 📁 Related files
 
-- …
 
-🧪 Related tests:
-
-\`\`\`sh
-
-\`\`\`
-
+#### 🧪 Related tests:
 
 
 
 ---
-Notes:
+
+*Scripts, references, notes, questions*
+
+- 
 "
 #endregion
 
