@@ -1,0 +1,68 @@
+#!/bin/bash
+
+cmd=$(basename $0)
+
+if [ -z "$WORK_NO_GLOW" ]; then
+  hash glow 2>/dev/null || { echo "ERROR: missing dependencies: 'glow'" && exit 1; }
+fi
+
+if [ ! -d .work ]; then
+  echo "Error: workspace directory not found. Please run \`$cmd init\`."
+  exit 1
+fi
+
+help() {
+  echo "Manage project's workspace (.work/). Usage:"
+  echo
+  echo "- \`$cmd init\`: initialize workspace directory (.work/)"
+  echo "- \`$cmd start|s\`: start development server"
+  echo "- \`$cmd startworker|sw\`: start worker process (if any)"
+  echo "- \`$cmd shell|sh\`: connect to shell"
+  echo "- \`$cmd migrate|m\`: apply pending migrations to database"
+  echo "- \`$cmd notes|n\`: show content of .work/notes.md"
+}
+
+# help command
+if [[ -z "$1" || "$1" =~ ^(-help|-h|help|h)$ ]]; then
+  if [ -z "$WORK_NO_GLOW" ]; then
+    help | glow
+  else
+    help
+  fi
+
+elif [[ "$1" =~ ^(init)$ ]]; then
+  mkdir .work
+  touch .work/notes.md
+  # TODO: add template files for start, startworker, migrate, shell
+
+# migrate command
+elif [[ "$1" =~ ^(migrate|m)$ ]]; then
+  .work/migrate "${@:2}"
+
+# notes command
+elif [[ "$1" =~ ^(notes|n)$ ]]; then
+  if [ -z "$WORK_NO_GLOW" ]; then
+    glow .work/notes.md
+  else
+    cat .work/notes.md
+  fi
+
+# start command
+elif [[ "$1" =~ ^(start|s)$ ]]; then
+  .work/start "${@:2}"
+
+# startworker command
+elif [[ "$1" =~ ^(startworker|sw)$ ]]; then
+  .work/startworker "${@:2}"
+
+# shell command
+elif [[ "$1" =~ ^(shell|sh)$ ]]; then
+  .work/shell "${@:2}"
+
+# run command in project's workspace directory
+elif [ -f ".work/$1" ]; then
+  .work/$@
+else
+  echo "Error: unknown command '$1'."
+  exit 1
+fi
