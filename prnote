@@ -1,0 +1,6 @@
+#!/bin/bash
+
+branchname=$(git branch --show-current)
+branchname_no_suffix=$(echo $branchname | sed 's#wzulfikar/##')
+
+glow .work/*$branchname_no_suffix.md

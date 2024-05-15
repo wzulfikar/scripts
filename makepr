@@ -8,14 +8,14 @@ if [ "$1" = "-h" ]; then
   exit
 fi
 
-if [ ! -d "./workspace" ]; then
+if [ ! -d "./work" ]; then
   echo "Creating workspace directory (one time only)..."
   mkdir ./workspace
 fi
 
 branchname=$(git branch --show-current)
 branchname_no_suffix=$(echo $branchname | sed 's#wzulfikar/##')
-filepath="./workspace/$(date -I)-pr_$branchname_no_suffix.md"
+filepath="./work/$(date -I)-pr_$branchname_no_suffix.md"
 
 if [ -f "$filepath" ]; then
   echo "File already exists: $filepath"

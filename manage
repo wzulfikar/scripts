@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cmd="python manage.py $@"
+
+echo
+echo "$cmd"
+
+$cmd
