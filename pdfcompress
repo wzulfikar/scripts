@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+
+# Based on https://www.reddit.com/r/opensource/comments/ou4y5h/is_there_an_open_source_program_to_reduce_the/
+
+# usage:
+# 1. adjust file permission (if you have not): `chmod +x eq`
+# 2. copy or link to your path, ie. `ln -s eq /usr/local/bin`
+# 3. run `eq helloworld helloworld`
+
+# display usage info
+if [ "$1" == "-h" ] || [ -z "$1" ]; then
+    echo "pdfcompress –– compress pdf using imagemagick"
+    echo "usage: pdfcompress <pdffile>"
+    echo "example: pdfcompress my-pdf-file.pdf"
+    exit
+fi
+
+# ensure pdf file exists
+if [ ! -f "$1" ]; then
+    echo "Error: cannot find pdf file '$1'"
+    exit
+fi
+
+PDFFILE=$1
+OUT=$2
+
+if [ -z "$2" ]; then
+    OUT=$PDFFILE.compressed.pdf
+fi
+
+echo "Compressing PDF file.."
+magick -density 150x150 -quality 80 -compress JPEG "$PDFFILE" "$OUT"
+echo "✔ Done! $OUT"

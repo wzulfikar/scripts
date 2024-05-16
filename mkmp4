@@ -1,3 +1,1 @@
-#!/bin/bash
-
-makemp4 $@
+/Users/wzulfikar/code/github/scripts/makemp4
