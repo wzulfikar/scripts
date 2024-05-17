@@ -1,13 +1,17 @@
 #!/bin/bash
 
+# TODO:
+# - command to sync with Notion page (or Github Gist)
+
 cmd=$(basename $0)
+workspace_dir='.work'
 
 if [ -z "$WORK_NO_GLOW" ]; then
   hash glow 2>/dev/null || { echo "ERROR: missing dependencies: 'glow'" && exit 1; }
 fi
 
-if [ ! -d .work ]; then
-  echo "Error: workspace directory not found. Please run \`$cmd init\`."
+if [ ! -d "$worspace_dir/" ]; then
+  echo "Error: workspace directory not found ($workspace_dir/). Please run \`$cmd init\`."
   exit 1
 fi
 
@@ -19,6 +23,7 @@ help() {
   echo "- \`$cmd startworker|sw\`: start worker process (if any)"
   echo "- \`$cmd shell|sh\`: connect to shell"
   echo "- \`$cmd test|t\`: run test"
+  echo "- \`$cmd list|l\`: show work items form ~/.work/list.md"
   echo "- \`$cmd migrate|m\`: apply pending migrations to database"
   echo "- \`$cmd notes|n\`: show content of .work/notes.md"
 }
@@ -32,41 +37,64 @@ if [[ -z "$1" || "$1" =~ ^(-help|-h|help|h)$ ]]; then
   fi
 
 elif [[ "$1" =~ ^(init)$ ]]; then
-  mkdir .work
-  touch .work/notes.md
+  mkdir $workspace_dir
+  touch $workspace_dir/notes.md
   # TODO: add template files for start, startworker, migrate, shell
+
+# list command
+elif [[ "$1" =~ ^(list|l)$ ]]; then
+  LIST_FILE="$workspace_dir/list.md"
+  if [[ ! -z "$2" ]]; then
+    echo "- [ ] $2" '`'$(date +%Y-%m-%d)'`' >>~/$LIST_FILE
+    echo "Item added to list!"
+    if [ -z "$WORK_NO_GLOW" ]; then
+      tail -n1 ~/$LIST_FILE | glow
+    fi
+    exit 0
+  fi
+
+  echo "Showing content of '~/$LIST_FILE'.."
+  if [ -z "$WORK_NO_GLOW" ]; then
+    tail -n10 ~/$LIST_FILE | glow
+  else
+    cat ~/$LIST_FILE
+  fi
+
+# editlist command
+elif [[ "$1" =~ ^(editlist|listedit)$ ]]; then
+  nano ~/$workspace_dir/list.md
 
 # migrate command
 elif [[ "$1" =~ ^(migrate|m)$ ]]; then
-  .work/migrate "${@:2}"
+  $workspace_dir/migrate "${@:2}"
 
 # notes command
 elif [[ "$1" =~ ^(notes|n)$ ]]; then
   if [ -z "$WORK_NO_GLOW" ]; then
-    glow .work/notes.md
+    glow $workspace_dir/notes.md
   else
-    cat .work/notes.md
+    cat $workspace_dir/notes.md
   fi
 
 # start command
 elif [[ "$1" =~ ^(start|s)$ ]]; then
-  .work/start "${@:2}"
+  $workspace_dir/start "${@:2}"
 
 # startworker command
 elif [[ "$1" =~ ^(startworker|sw)$ ]]; then
-  .work/startworker "${@:2}"
+  $workspace_dir/startworker "${@:2}"
 
 # run test
 elif [[ "$1" =~ ^(test|t)$ ]]; then
-  .work/test "${@:2}"
+  $workspace_dir/test "${@:2}"
 
 # shell command
 elif [[ "$1" =~ ^(shell|sh)$ ]]; then
-  .work/shell "${@:2}"
+  $workspace_dir/shell "${@:2}"
 
 # run command in project's workspace directory
 elif [ -f ".work/$1" ]; then
-  .work/$@
+  $workspace_dir/$@
 else
   echo "Error: unknown command '$1'."
   exit 1
