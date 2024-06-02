@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" = "-h" ]; then
-  echo "$(basename $0) – create markdown note for Pull Request."
+  echo "$(basename $0) – create markdown note for PR review note."
   echo "The output will be stored in the same directory of input file."
   echo "Usage: $(basename $0)"
   echo "Example: $(basename $0)"
@@ -15,7 +15,13 @@ fi
 
 branchname=$(git branch --show-current)
 branchname_no_suffix=$(echo $branchname | sed 's#wzulfikar/##')
-filepath="./.work/$(date -I)-pr_$branchname_no_suffix.md"
+filepath="./.work/$(date -I)-review_$branchname_no_suffix.md"
+
+# Get name of branch creator based on last commit
+author_name="$(git log -n1 --pretty=format:"%an (%ae)")"
+
+# Get PR URL
+pr_url=$(gh pr view --json url | jq -r '.url')
 
 if [ -f "$filepath" ]; then
   echo "File already exists: $filepath"
@@ -27,32 +33,31 @@ touch $filepath
 #region Create template string
 TEMPLATE="Slack/Notion: here
 Branch: $branchname
-PR: here
+Author: $author_name
+PR: [here]($pr_url)
 
 ---
 
-**Goals**:
+## Steps to review:
 
-- 
+- Gather info to understand the context:
 
-#### Tasks
+  - [ ] Read task description in Notion/Slack
+  - [ ] Read PR description
 
-- [ ] 
+- Self check:
 
-#### 📁 Related files
+  - [ ] What's the business requirement of this PR?
 
+- Implementation details:
 
+  - [ ] Check the code changes
+  - [ ] Check if specs are updated
+  - [ ] Run the flow locally
+  - [ ] Add comments/questions in the PR (if any)
 
-#### 🧪 Related tests:
+## Notes
 
-
-
-
----
-
-*Scripts, references, notes, questions*
-
-- 
 "
 #endregion
 

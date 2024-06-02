@@ -6,8 +6,11 @@
 cmd=$(basename $0)
 workspace_dir='.work'
 
+EDITOR=${EDITOR:-micro}
+READER="glow"
+
 if [ -z "$WORK_NO_GLOW" ]; then
-  hash glow 2>/dev/null || { echo "ERROR: missing dependencies: 'glow'" && exit 1; }
+  hash $READER 2>/dev/null || { echo "ERROR: missing dependencies: '$READER'" && exit 1; }
 fi
 
 if [ ! -d "$worspace_dir/" ]; then
@@ -23,7 +26,7 @@ help() {
   echo "- \`$cmd startworker|sw\`: start worker process (if any)"
   echo "- \`$cmd shell|sh\`: connect to shell"
   echo "- \`$cmd test|t\`: run test"
-  echo "- \`$cmd list|l\`: show work items form ~/.work/list.md"
+  echo "- \`$cmd list|l|todo\`: show work items form ~/.work/todo.md"
   echo "- \`$cmd migrate|m\`: apply pending migrations to database"
   echo "- \`$cmd notes|n\`: show content of .work/notes.md"
 }
@@ -42,8 +45,8 @@ elif [[ "$1" =~ ^(init)$ ]]; then
   # TODO: add template files for start, startworker, migrate, shell
 
 # list command
-elif [[ "$1" =~ ^(list|l)$ ]]; then
-  LIST_FILE="$workspace_dir/list.md"
+elif [[ "$1" =~ ^(list|l|todo)$ ]]; then
+  LIST_FILE="$workspace_dir/todo.md"
   if [[ ! -z "$2" ]]; then
     echo "- [ ] $2" '`'$(date +%Y-%m-%d)'`' >>~/$LIST_FILE
     echo "Item added to list!"
@@ -61,8 +64,8 @@ elif [[ "$1" =~ ^(list|l)$ ]]; then
   fi
 
 # editlist command
-elif [[ "$1" =~ ^(editlist|listedit)$ ]]; then
-  nano ~/$workspace_dir/list.md
+elif [[ "$1" =~ ^(editlist|listedit|edittodo|update|u)$ ]]; then
+  $EDITOR ~/$workspace_dir/todo.md
 
 # migrate command
 elif [[ "$1" =~ ^(migrate|m)$ ]]; then
@@ -71,10 +74,14 @@ elif [[ "$1" =~ ^(migrate|m)$ ]]; then
 # notes command
 elif [[ "$1" =~ ^(notes|n)$ ]]; then
   if [ -z "$WORK_NO_GLOW" ]; then
-    glow $workspace_dir/notes.md
+    $READER $workspace_dir/notes.md
   else
     cat $workspace_dir/notes.md
   fi
+
+# build command
+elif [[ "$1" =~ ^(build|b)$ ]]; then
+  $workspace_dir/build "${@:2}"
 
 # start command
 elif [[ "$1" =~ ^(start|s)$ ]]; then
