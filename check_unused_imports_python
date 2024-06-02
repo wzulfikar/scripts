@@ -1,0 +1,47 @@
+#!/bin/bash
+
+if [ "$1" = "-h" ]; then
+    echo "$(basename $0) – Run vulture on the changed Python files in the current branch (against main)."
+    echo "Usage: $(basename $0)"
+    exit
+fi
+
+# Check dependencies
+hash vulture 2>/dev/null || {
+    echo "ERROR: missing dependency 'vulture'. To install:"
+    echo "pip install vulture"
+    exit 1
+}
+hash git 2>/dev/null || {
+    echo "ERROR: missing dependency 'git'. To install (for macOS):"
+    echo "brew install git"
+    exit 1
+}
+
+# Activate virtual environment if found
+if [ -d .venv ]; then
+    source .venv/bin/activate
+elif [ -d venv ]; then
+    source venv/bin/activate
+fi
+
+# Get the list of changed Python files in the current branch
+changed_files=$(git diff --name-only main..HEAD | grep '\.py$')
+
+count_changed_files=$(wc -w <<< $changed_files)
+echo "Checking for unused imports in Python files..$count_changed_files files"
+
+for file in $changed_files; do
+    unused_import=$(vulture $file | grep 'unused import')
+    if [ -n "$unused_import" ]; then
+        check_failed=true
+        echo "- $unused_import"
+    fi
+done
+
+if [ -z "$check_failed" ]; then
+    echo "🟢 Check passed!"
+else
+    echo "🔴 Check failed!"
+    exit 1
+fi
