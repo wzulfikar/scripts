@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ "$1" = "-h" ]; then
+    echo "$(basename $0) – Run eslint on the changed JS/TS files in the current branch (against main) to check for unused imports. Uses npx to run eslint."
+    echo "Usage: $(basename $0)"
+    exit
+fi
+
+# Check dependencies
+hash git 2>/dev/null || {
+    echo "ERROR: missing dependency 'git'. To install (for macOS):"
+    echo "brew install git"
+    exit 1
+}
+
+# Get the list of changed Python files in the current branch
+changed_files=$(git diff --name-only main..HEAD | egrep '\.(js|ts|jsx|tsx)$')
+
+count_changed_files=$(wc -w <<<$changed_files)
+echo "Checking for unused imports in JS/TS files..$count_changed_files files"
+
+npx eslint --rule "no-unused-vars: error" $changed_files
+
+if [ "$?" = 0 ]; then
+    echo "🟢 Check passed!"
+else
+    echo "🔴 Check failed!"
+    exit 1
+fi
