@@ -64,7 +64,7 @@ elif [[ "$1" =~ ^(list|l|todo)$ ]]; then
   fi
 
 # editlist command
-elif [[ "$1" =~ ^(editlist|listedit|edittodo|update|u)$ ]]; then
+elif [[ "$1" =~ ^(editlist|listedit|edittodo|update|u|e)$ ]]; then
   $EDITOR ~/$workspace_dir/todo.md
 
 # migrate command

@@ -41,7 +41,7 @@ for file in "$@"; do
 
   # Check extension and skip if not mov/mp4/mkv
   ext=$(echo "${input_file##*.}" | tr '[:upper:]' '[:lower:]')
-  if [ "$ext" != "mov" ] && [ "$ext" != "mp4" ] && [ "$ext" != "mkv" ]; then
+  if [ "$ext" != "mov" ] && [ "$ext" != "mp4" ] && [ "$ext" != "mkv" ] && [ "$ext" != "webm" ]; then
     echo "  skipped: extension must be .mov or .mp4"
     continue
   fi
