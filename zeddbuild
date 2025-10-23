@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "[info] building zed-fork for custom binary 'zedd'..."
+if [ -z "$(grep 'url = https://github.com/wzulfikar/zed' .git/config)" ]; then
+    echo "[error] this script must be run from the root directory of the zed-fork repository."
+    echo "[hint] the root directory might be '~/code/zed-fork'."
+    exit 1
+fi
+
+cargo build --release
+
+echo "[info] linking zed-fork production build to zedd"
+sudo ln -s $HOME/code/github/zed-fork/target/release/zed target/release/zedd
