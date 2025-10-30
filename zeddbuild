@@ -9,5 +9,9 @@ fi
 
 cargo build --release
 
-echo "[info] linking zed-fork production build to zedd"
-sudo ln -s $HOME/code/github/zed-fork/target/release/zed target/release/zedd
+cp target/release/zed /Applications/zedd
+
+echo 'Done! You can run your local zed using "zd" command.'
+echo ''
+echo 'Make sure you have alias "zd" in your shell profile. Example:'
+echo 'alias zd="zed --zed /Applications/zedd"'
