@@ -12,5 +12,5 @@ I need ${WAIT_TIME} break because my AI is rate-limited. Suggest a fun activity 
 - Maybe there's TODO items in the codebase that is easy to solve? Check the codebase and see if something is worth tackling. Include the surrounding code in the result if you find some.
 - Or maybe there's something new I can learn... If you think of something, please include the URL
 
-If no relevant PR, issues, or TODOs, just give me something interesting to learn.
+If no relevant PR, issues, or TODOs, just give me something interesting to learn. Before returning the URL, use fetch tool to make sure it exists.
 EOF
