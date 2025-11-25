@@ -10,5 +10,5 @@ opencode run <<'EOF' | glow -p
 I need ${WAIT_TIME} break because my AI is rate-limited. Suggest a fun activity while I wait.
 - Maybe there's Github PR or issues that I can tackle? You can use `gh` cli to check
 - Maybe there's TODO items in the codebase that is easy to solve? Check the codebase and see if something is worth tackling. Include the surrounding code in the result if you find some.
-- Or maybe there's something new I can learn...
+- Or maybe there's something new I can learn... If you think of something, please include the URL
 EOF
