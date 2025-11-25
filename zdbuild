@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "[info] building zed-fork for custom binary 'zedd'..."
+echo "[info] building zed-fork for custom binary 'zd'..."
 if [ -z "$(grep 'url = https://github.com/wzulfikar/zed' .git/config)" ]; then
     echo "[error] this script must be run from the root directory of the zed-fork repository."
     echo "[hint] the root directory might be '~/code/zed-fork'."
@@ -9,9 +9,6 @@ fi
 
 cargo build --release
 
-cp target/release/zed /Applications/zedd
+cp target/release/zed /Applications/Zed\ Dev.app/Contents/MacOS/zed
 
 echo 'Done! You can run your local zed using "zd" command.'
-echo ''
-echo 'Make sure you have alias "zd" in your shell profile. Example:'
-echo 'alias zd="zed --zed /Applications/zedd"'
