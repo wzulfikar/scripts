@@ -1,6 +1,7 @@
 #!/bin/sh
 
-hash opencode 2>/dev/null || { echo "ERROR: 'opencode' is not installed" && exit 1; }
+DEPS="opencode glow"
+hash $DEPS 2>/dev/null || { echo "[ERROR] please install all dependencies: $DEPS" && exit 1; }
 
 WAIT_TIME="1 hour"
 OPENCODE_MODEL=${OPENCODE_MODEL:-${OPENCODE_DEFAULT_MODEL}}
