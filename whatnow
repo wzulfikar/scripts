@@ -3,10 +3,12 @@
 hash opencode 2>/dev/null || { echo "ERROR: 'opencode' is not installed" && exit 1; }
 
 WAIT_TIME="1 hour"
+OPENCODE_MODEL=${OPENCODE_MODEL:-${OPENCODE_DEFAULT_MODEL}}
 
 echo "Suggesting an activity for '${WAIT_TIME}' waiting time..."
+echo "- using model: $OPENCODE_MODEL"
 
-opencode run <<'EOF' | glow
+opencode --model $OPENCODE_MODEL run <<'EOF' | glow
 I need ${WAIT_TIME} break because my AI is rate-limited. Suggest a fun activity while I wait.
 - Maybe there's Github PR or issues that I can tackle? You can use `gh` cli to check. If there's PR or issue that's worth tackling, include the title or description summary in your result.
 - Maybe there's TODO items in the codebase that is easy to solve? Check the codebase and see if something is worth tackling. Include the surrounding code in the result if you find some.
