@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: wt [command]"
+    echo "Commands:"
+    echo "  init    Initialize a new worktree at .wt"
+    echo "  add     Add a new worktree at .wt/<branch>"
+    echo ""
+    echo "other commands are forwarded to git worktree"
+    exit 0
+fi
+
+if [ "$1" = "init" ] || [ "$1" = "i" ]; then
+    mkdir .wt
+    echo "Initialized worktree at '.wt/'."
+    echo "Make sure you have added '.wt/' to your global git ignore (e.g. ~/.gitignore_global)"
+elif [ "$1" = "add" ] || [ "$1" = "a" ]; then
+    git worktree add .wt/$2
+else
+    git worktree $@
+fi
