@@ -15,7 +15,7 @@ if [ "$1" = "init" ] || [ "$1" = "i" ]; then
     echo "Initialized worktree at '.wt/'."
     echo "Make sure you have added '.wt/' to your global git ignore (e.g. ~/.gitignore_global)"
 elif [ "$1" = "add" ] || [ "$1" = "a" ]; then
-    git worktree add .wt/$2
+    git worktree add .wt/$(basename $PWD)_$2 $2
 else
     git worktree $@
 fi
