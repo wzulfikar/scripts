@@ -23,7 +23,6 @@ echo "  Done! https://gist.github.com/${GIST_ID_NANORC}"
 # zed configs
 echo "- Updating gist for zed: keymap.json, settings.json, tasks.json, snippets/snippets.json, snippets/typescript.json"
 gh gist edit ${GIST_ID_ZED} -f keymap.jsonc ~/.config/zed/keymap.json
-gh gist edit ${GIST_ID_ZED} -f settings.jsonc ~/.config/zed/settings.json
 gh gist edit ${GIST_ID_ZED} -f tasks.jsonc ~/.config/zed/tasks.json
 gh gist edit ${GIST_ID_ZED} -f snippets_snippets.jsonc ~/.config/zed/snippets/snippets.json
 gh gist edit ${GIST_ID_ZED} -f snippets_typescript.jsonc ~/.config/zed/snippets/typescript.json
