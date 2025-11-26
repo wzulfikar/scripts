@@ -17,10 +17,12 @@ if [ "$1" = "init" ] || [ "$1" = "i" ]; then
     echo "Initialized worktree at '.wt/'."
     echo "Make sure you have added '.wt/' to your global git ignore (e.g. ~/.gitignore_global)"
 elif [ "$1" = "add" ] || [ "$1" = "a" ]; then
-    git branch $2
-    git worktree add $worktree_dir $2
-    echo ""
-    echo "Done! Worktree added at $worktree_dir"
+    if ! git show-ref --verify --quiet refs/heads/"$2"; then
+        git branch "$2"
+    fi
+    if git worktree add "$worktree_dir" "$2"; then
+        echo "\bDone! Worktree added at $worktree_dir"
+    fi
 elif [ "$1" = "ls" ]; then
     git worktree list
 elif [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
