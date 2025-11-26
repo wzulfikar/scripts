@@ -10,12 +10,22 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
     exit 0
 fi
 
+worktree_dir=".wt/$(basename $PWD)_$2"
+
 if [ "$1" = "init" ] || [ "$1" = "i" ]; then
     mkdir .wt
     echo "Initialized worktree at '.wt/'."
     echo "Make sure you have added '.wt/' to your global git ignore (e.g. ~/.gitignore_global)"
 elif [ "$1" = "add" ] || [ "$1" = "a" ]; then
-    git worktree add .wt/$(basename $PWD)_$2 $2
+    git branch $2
+    git worktree add $worktree_dir $2
+    echo ""
+    echo "Done! Worktree added at $worktree_dir"
+elif [ "$1" = "ls" ]; then
+    git worktree list
+elif [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
+    git worktree remove $worktree_dir
+    echo "Worktree removed: $worktree_dir"
 else
     git worktree $@
 fi
