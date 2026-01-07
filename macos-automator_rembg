@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Usage:
+# 1. In the "Automator" app on your Mac, choose File > New
+# 2. Select "Quick Action", then click Choose
+# 3. Search for "Run Shell Script" action and add it
+# 4. Set "Shell" to /bin/sh and "Pass input" to "as arguments"
+# 5. Add this code snippet to the shell script:
+# # Include the necessary PATH so the commands are detected by Automator
+# export PATH=$PATH:$HOME/code/github/scripts/:/Users/wzulfikar/.asdf/shims/
+# macos-automator_rembg "$@"
+
+file=$@
+[ -z "$file" ] && echo "Usage: $(basename $0) some-image.png" && exit 0
+
+# Skip if file is not an image
+[ -z "$(echo "$file" | grep -E '(.png|.jpg|.jpeg|.heif)$')" ] && exit 0
+
+# Show error if dependencies are missing
+hash rembg 2>/dev/null || { osascript -e "display dialog \"Error removing background: 'rembg' is missing\"" && exit 1; }
+
+echo "[info] Removing background..."
+output="${file%.*}.rembg.${file##*.}" # insert .rembg before file extension
+rembg i -m bria-rmbg "$file" "$output"
