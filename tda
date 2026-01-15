@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Prerequisites:
+# - opencode must be installed
+# - todoist cli must be installed
+# - todoist-agent must be created in opencode
+
+opencode --agent todoist-agent

@@ -1,0 +1,5 @@
+CHROME_BIN=${CHROME_BIN:-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"}
+
+mkdir -p $HOME/.cdp-profiles
+
+nohup "$CHROME_BIN" --remote-debugging-port=9222 --user-data-dir=$HOME/.cdp-profiles/default >/dev/null 2>&1 &
