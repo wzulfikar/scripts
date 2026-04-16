@@ -52,7 +52,7 @@ for file in "$@"; do
     -movflags faststart \
     -pix_fmt yuv420p \
     -threads:v $THREADS_COUNT \
-    -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2 ${FFMPEG_FILTER}" \
+    -vf "scale=1920:1080:force_original_aspect_ratio=decrease,scale=trunc(iw/2)*2:trunc(ih/2)*2${FFMPEG_FILTER}" \
     -hide_banner -loglevel error \
     "$output_file"
 done
