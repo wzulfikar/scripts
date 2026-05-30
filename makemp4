@@ -46,7 +46,8 @@ for file in "$@"; do
     continue
   fi
 
-  # adapted from https://rigor.com/blog/optimizing-animated-gifs-with-html5-video
+  # - Adapted from https://rigor.com/blog/optimizing-animated-gifs-with-html5-video
+  # - Output size will be capped at 1920:1080
   time ffmpeg \
     -i "$input_file" \
     -movflags faststart \

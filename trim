@@ -1,0 +1,37 @@
+#!/bin/sh
+
+if [ "$#" -lt "2" ] || [ "$1" = "-h" ]; then
+    echo "$(basename $0) trim a media file (video or audio) using ffmpeg."
+    echo "Works with .mov, .mp4, .mp3, .m4a, .wav, etc. Output goes next to the input."
+    echo ""
+    echo "usage: $(basename $0) <file> <end>            trim from start to <end>"
+    echo "       $(basename $0) <file> <start> <end>    trim from <start> to <end>"
+    echo ""
+    echo "time format: SS | SS.mmm | MM:SS | HH:MM:SS (fractional seconds allowed)"
+    echo "examples:"
+    echo "  $(basename $0) song.mp3 15        first 15 seconds"
+    echo "  $(basename $0) song.mp3 14:10     first 14 min 10 sec"
+    echo "  $(basename $0) song.mp3 10.5      first 10.5 seconds"
+    echo "  $(basename $0) clip.mp4 5 30      from 5s to 30s"
+    exit
+fi
+
+input_file=$1
+ext="${input_file##*.}"
+output_file="${input_file%.*}.trimmed.$ext"
+
+if [ -z "$3" ]; then
+    start_time=0
+    end_time=$2
+else
+    start_time=$2
+    end_time=$3
+fi
+
+ffmpeg -i "$input_file" \
+    -loglevel panic -hide_banner -nostats \
+    -ss "$start_time" \
+    -to "$end_time" \
+    -c copy "$output_file"
+
+echo "trim completed. output: ${output_file}"

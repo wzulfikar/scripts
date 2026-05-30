@@ -7,8 +7,12 @@ if [ -z "$(grep 'url = https://github.com/wzulfikar/zed' .git/config)" ]; then
     exit 1
 fi
 
+TARGET_DIR=${CARGO_TARGET_DIR:-target}
+
+echo "[info] CARGO_TARGET_DIR: ${TARGET_DIR}"
+
 cargo build --release
 
-cp target/release/zed /Applications/Zed\ Dev.app/Contents/MacOS/zed
+cp ${TARGET_DIR}/release/zed /Applications/Zed\ Dev.app/Contents/MacOS/zed
 
 echo 'Done! You can run your local zed using "zd" command.'

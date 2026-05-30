@@ -1,0 +1,49 @@
+#!/bin/bash
+CACHE_DIR="$HOME/.cache/curl-url-cache"
+mkdir -p "$CACHE_DIR"
+
+# only cache downloads from these domains
+CACHED_DOMAINS=(
+  "packages.rnrepo.org"
+  "repo1.maven.org"
+)
+
+OUTPUT_FILE=""
+URL=""
+
+for i in "${!@}"; do
+  if [[ "${@:$i:1}" == "-o" ]]; then
+    OUTPUT_FILE="${@:$((i+1)):1}"
+  fi
+  if [[ "${@:$i:1}" =~ ^https?:// ]]; then
+    URL="${@:$i:1}"
+  fi
+done
+
+SHOULD_CACHE=false
+for domain in "${CACHED_DOMAINS[@]}"; do
+  if [[ "$URL" == *"$domain"* ]]; then
+    SHOULD_CACHE=true
+    break
+  fi
+done
+
+if [[ "$SHOULD_CACHE" == true && -n "$OUTPUT_FILE" ]]; then
+  CACHE_KEY=$(echo "$URL" | md5)
+  CACHED="$CACHE_DIR/$CACHE_KEY"
+
+  if [[ -f "$CACHED" ]]; then
+    echo "[curl-cache] HIT: $URL" >&2
+    cp "$CACHED" "$OUTPUT_FILE"
+    exit 0
+  else
+    echo "[curl-cache] MISS: $URL" >&2
+    /usr/bin/curl "$@"
+    if [[ $? -eq 0 ]]; then
+      cp "$OUTPUT_FILE" "$CACHED"
+    fi
+    exit $?
+  fi
+fi
+
+/usr/bin/curl "$@"
